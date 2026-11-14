@@ -1,0 +1,6 @@
+{
+  "name": "camel-caravan-theme",
+  "description": "月の沙漠をラクダのキャラバンが歩く Claude Code のテーマ / A camel caravan theme for Claude Code",
+  "owner": { "name": "TuesdayGhost" },
+  "plugins": [{ "name": "rakuda-theme", "source": "./" }]
+}
