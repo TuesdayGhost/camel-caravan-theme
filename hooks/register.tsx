@@ -120,9 +120,9 @@ const showTheme = async ($: EngineInterface): Promise<void> => {
     const backdrop = {
       scene: BACKDROP,
       id: BACKDROP,
-      // Dark panels and next to no blur: the text stays sharp, and the
-      // camels stay camels where a panel lies over them.
-      glass: { blur: 2, tint: '#12152b', opacity: 0.62 },
+      // Dark panels and no blur: the camels stay sharp where a panel lies
+      // over them. Raise `opacity` if the chat's text gets hard to read.
+      glass: { blur: 0, tint: '#12152b', opacity: 0.45 },
     }
     await $.theme.set({ backdrop })
   } catch {
