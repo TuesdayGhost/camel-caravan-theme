@@ -6,6 +6,8 @@
 
 ![Desktop app: a moonlit desert behind the chat](docs/screenshot-desktop.png)
 
+![Desktop app (animation): the loads change with the tools, and turn to a red "!" when one fails](docs/desktop.gif)
+
 A Claude Code theme: a camel caravan walks slowly from left to right across a moonlit desert.
 Each camel's load shows the tool Claude is running. When the answer is back, the camels carry their loads to the oasis and sit down to rest. The stars twinkle overhead.
 
