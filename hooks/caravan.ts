@@ -314,7 +314,7 @@ const SVG_STARS = 70
  * this is set to clear that box while it is empty; the sand, the oasis and the
  * caravan keep this height whatever the window's size, and never scale.
  */
-export const CARAVAN_BOTTOM_PX = 145
+export const CARAVAN_BOTTOM_PX = 135
 // The dunes are drawn 1600 wide and stretched to the window's width alone;
 // the line the camels walk is this far down that drawing, in pixels.
 const DUNE_FEET = 88
