@@ -314,7 +314,7 @@ const SVG_STARS = 70
  * this is set to clear that box while it is empty; the sand, the oasis and the
  * caravan keep this height whatever the window's size, and never scale.
  */
-export const CARAVAN_BOTTOM_PX = 170
+export const CARAVAN_BOTTOM_PX = 155
 // The dunes are drawn 1600 wide and stretched to the window's width alone;
 // the line the camels walk is this far down that drawing, in pixels.
 const DUNE_FEET = 88
@@ -428,7 +428,7 @@ ${starsSvg()}
 <path d="M0 150Q400 128 800 146T1600 140V${duneHeight}H0z" fill="#171322"/>
 </svg>
 <svg x="${percentAt(OASIS_AT)}%" overflow="visible"><g transform="translate(0 2)" opacity=".8"><ellipse cx="34" cy="2" rx="40" ry="5" fill="#2c5f7a"/><path d="M0 0q-6 -30 4 -58" fill="none" stroke="#5c4a34" stroke-width="5" stroke-linecap="round"/><path d="M4 -58q-22 -14 -36 2M4 -58q-10 -24 -30 -22M4 -58q8 -24 30 -20M4 -58q24 -12 36 6M4 -58q16 2 22 20" fill="none" stroke="#2f6b4a" stroke-width="4" stroke-linecap="round"/></g></svg>
-<g fill="#c9a66b" opacity=".6">${camels}</g>
+<g fill="#e8c88e">${camels}</g>
 </g></svg>
 </svg>`
 }

@@ -1,6 +1,6 @@
 {
   "name": "rakuda-theme",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "月の沙漠をラクダのキャラバンが歩くテーマ。動いているツールに合わせて荷物が変わり、星がまたたく (/rakuda-theme on|off)",
   "author": { "name": "TuesdayGhost" },
   "license": "MIT",
