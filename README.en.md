@@ -2,13 +2,9 @@
 
 [日本語](README.md) | English
 
-<!--
-Screenshot slot. Put the images in docs/ and delete this comment's
-first and last lines.
-
 ![Terminal: a camel caravan walking above the prompt](docs/screenshot-terminal.png)
+
 ![Desktop app: a moonlit desert behind the chat](docs/screenshot-desktop.png)
--->
 
 A Claude Code theme: a camel caravan walks slowly from left to right across a moonlit desert.
 Each camel's load shows the tool Claude is running. When the answer is back, the camels carry their loads to the oasis and sit down to rest. The stars twinkle overhead.
