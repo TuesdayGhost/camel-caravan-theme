@@ -303,19 +303,21 @@ export const bandCells = (
 // --- The desktop app: one SVG behind the chat -------------------------------
 
 const SVG_CAMELS = 6
-const SVG_FROM = -60
-const SVG_TO = 1660
+// The crossing, in percent of the window's width: from off one edge to off
+// the other.
+const WALK_FROM = -6
+const WALK_TO = 106
 const SVG_STARS = 70
-// How far the sand, the oasis and the caravan are raised from the foot of the
-// scene, so they walk above the message box and not behind it. The scene
-// cannot read where that box is, so the lift goes by the scene's own size: in
-// the scene's units, which a wide window draws larger (less lift needed) and a
-// small one smaller (more).
-const LAND_LIFT = 270
-const LAND_LIFT_WIDE = 200
-const LAND_LIFT_WIDEST = 150
-const LAND_LIFT_SMALL = 350
-
+/**
+ * How far above the foot of the window the camels' feet stand, in CSS pixels:
+ * the one number to tune. The scene cannot read where the message box is, so
+ * this is set to clear that box while it is empty; the sand, the oasis and the
+ * caravan keep this height whatever the window's size, and never scale.
+ */
+export const CARAVAN_BOTTOM_PX = 170
+// The dunes are drawn 1600 wide and stretched to the window's width alone;
+// the line the camels walk is this far down that drawing, in pixels.
+const DUNE_FEET = 88
 const CARGO_SVG: Readonly<Record<Cargo, string>> = {
   none: '',
   // A slip of paper with a folded corner.
@@ -366,22 +368,24 @@ const starsSvg = (): string => {
 }
 
 /**
- * The backdrop: a night sky with a crescent moon and slow stars, dunes, an
- * oasis at the right, and a caravan along the foot of the window. Positions
- * come from the milliseconds walked, through negative animation delays, so a
- * new load redraws without a jump.
+ * The backdrop: a night sky with a crescent moon and slow stars, which fills
+ * the window and scales with it, and over it the dunes, an oasis at the right
+ * and a caravan, which stand a fixed number of pixels above the window's foot
+ * (CARAVAN_BOTTOM_PX) and do not scale. Positions come from the milliseconds
+ * walked, through negative animation delays, so a new load redraws without a
+ * jump.
  */
 export const backdropSvg = (caravan: Caravan, now: number): string => {
   const walkedMs = walked(caravan, now)
   const isWalking = caravan.resumedAt !== null
-  const oasisX = SVG_FROM + OASIS_AT * (SVG_TO - SVG_FROM)
+  const percentAt = (at: number): string =>
+    (WALK_FROM + at * (WALK_TO - WALK_FROM)).toFixed(2)
   const camel = pathOf(
     caravan.phase === 'resting' ? SITTING : (WALKING[0] ?? SITTING),
   )
   let camels = ''
   for (let index = 0; index < SVG_CAMELS; index++) {
     const at = along(walkedMs, index, SVG_CAMELS)
-    const restX = (SVG_FROM + at * (SVG_TO - SVG_FROM)).toFixed(1)
     const delay = (-at * CROSSING_MS).toFixed(0)
     const carriesMs = carriesFor(caravan, walkedMs, index, SVG_CAMELS)
     // A load is set down at the oasis: its fade starts when the camel gets there.
@@ -392,33 +396,39 @@ export const backdropSvg = (caravan: Caravan, now: number): string => {
       carriesMs > 0
         ? `<g transform="translate(-4 -13)"><g${drop}>${CARGO_SVG[shownCargo(caravan, now)]}</g></g>`
         : ''
-    camels += `<g class="camel" style="transform:translateX(${restX}px);animation-delay:${delay}ms">${camel}${cargo}</g>`
+    // A percentage in an SVG transform is a share of the window's width (the
+    // nearest svg's box), so the walk spans any window; the drawing stays in
+    // pixels.
+    camels += `<g class="camel" style="transform:translateX(${percentAt(at)}%);animation-delay:${delay}ms">${camel}${cargo}</g>`
   }
+  const duneHeight = DUNE_FEET + CARAVAN_BOTTOM_PX + 4
   const style = `
 .camel{animation:walk ${CROSSING_MS}ms linear infinite;animation-play-state:${isWalking ? 'running' : 'paused'}}
 .cargo{opacity:.9}
 .drop{animation:drop 600ms ease-in forwards}
 .star{fill:#e8e8ff;opacity:.75;animation:twinkle 4s ease-in-out infinite}
-@keyframes walk{from{transform:translateX(${SVG_FROM}px)}to{transform:translateX(${SVG_TO}px)}}
+@keyframes walk{from{transform:translateX(${WALK_FROM}%)}to{transform:translateX(${WALK_TO}%)}}
 @keyframes drop{to{opacity:0;transform:translateY(8px)}}
 @keyframes twinkle{50%{opacity:.2}}
-.land{transform:translateY(-${LAND_LIFT}px)}
-@media (min-width:1700px){.land{transform:translateY(-${LAND_LIFT_WIDE}px)}}
-@media (min-width:2300px){.land{transform:translateY(-${LAND_LIFT_WIDEST}px)}}
-@media (max-width:1100px) and (max-height:700px){.land{transform:translateY(-${LAND_LIFT_SMALL}px)}}
 @media (prefers-reduced-motion: reduce){.camel,.drop,.star{animation:none!important}.drop{display:none}}`
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" height="100%" preserveAspectRatio="xMidYMax slice" font-family="monospace" color="#888"><style>${style}</style><defs>
+  // No viewBox on the root: its units are the window's own pixels. The sky
+  // scales inside a nested svg; the land hangs from the window's foot.
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" font-family="monospace" color="#888"><style>${style}</style>
+<svg viewBox="0 0 1600 1000" width="100%" height="100%" preserveAspectRatio="xMidYMax slice"><defs>
 <linearGradient id="night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0a0e22"/><stop offset="1" stop-color="#1a1d3a"/></linearGradient></defs>
 <rect width="1600" height="1000" fill="url(#night)"/>
 ${starsSvg()}
 <g opacity=".85"><circle cx="1330" cy="150" r="44" fill="#f5e9a0"/><circle cx="1350" cy="138" r="40" fill="#0c1026"/></g>
-<g class="land">
-<path d="M0 940Q200 900 400 935T800 930T1200 940T1600 925V1600H0z" fill="#262036"/>
-<path d="M0 972Q300 952 600 970T1200 968T1600 972V1600H0z" fill="#1b1728"/>
-<path d="M0 1075Q400 1040 800 1070T1600 1062V1600H0z" fill="#171322"/>
-<g transform="translate(${oasisX.toFixed(0)} 970)" opacity=".8"><ellipse cx="34" cy="2" rx="40" ry="5" fill="#2c5f7a"/><path d="M0 0q-6 -30 4 -58" fill="none" stroke="#5c4a34" stroke-width="5" stroke-linecap="round"/><path d="M4 -58q-22 -14 -36 2M4 -58q-10 -24 -30 -22M4 -58q8 -24 30 -20M4 -58q24 -12 36 6M4 -58q16 2 22 20" fill="none" stroke="#2f6b4a" stroke-width="4" stroke-linecap="round"/></g>
-<g transform="translate(0 968)" fill="#c9a66b" opacity=".6">${camels}</g>
-</g>
+</svg>
+<svg class="land" y="100%" overflow="visible"><g transform="translate(0 -${CARAVAN_BOTTOM_PX})">
+<svg y="-${DUNE_FEET}" width="100%" height="${duneHeight}" viewBox="0 0 1600 ${duneHeight}" preserveAspectRatio="none">
+<path d="M0 60Q200 20 400 55T800 50T1200 60T1600 45V${duneHeight}H0z" fill="#262036"/>
+<path d="M0 92Q300 72 600 90T1200 88T1600 92V${duneHeight}H0z" fill="#1b1728"/>
+<path d="M0 150Q400 128 800 146T1600 140V${duneHeight}H0z" fill="#171322"/>
+</svg>
+<svg x="${percentAt(OASIS_AT)}%" overflow="visible"><g transform="translate(0 2)" opacity=".8"><ellipse cx="34" cy="2" rx="40" ry="5" fill="#2c5f7a"/><path d="M0 0q-6 -30 4 -58" fill="none" stroke="#5c4a34" stroke-width="5" stroke-linecap="round"/><path d="M4 -58q-22 -14 -36 2M4 -58q-10 -24 -30 -22M4 -58q8 -24 30 -20M4 -58q24 -12 36 6M4 -58q16 2 22 20" fill="none" stroke="#2f6b4a" stroke-width="4" stroke-linecap="round"/></g></svg>
+<g fill="#c9a66b" opacity=".6">${camels}</g>
+</g></svg>
 </svg>`
 }

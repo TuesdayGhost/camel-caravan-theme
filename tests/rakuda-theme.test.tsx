@@ -1,7 +1,7 @@
 import type { On } from 'claude-code'
 import { expect, mock, test } from 'claude-code/testing'
 
-import { SITTING, WALKING } from '../hooks/caravan'
+import { CARAVAN_BOTTOM_PX, SITTING, WALKING } from '../hooks/caravan'
 
 const COLUMNS = 84
 
@@ -210,8 +210,8 @@ test('the desktop backdrop is one night scene that honours reduced motion', asyn
   expect(source.match(/class="camel"/g)?.length).toBe(6)
   expect(source.match(/class="cargo"/g)?.length).toBe(6)
   expect(source.match(/class="star"/g)?.length).toBe(70)
-  // The sand and the caravan are raised clear of the message box.
-  expect(source).toContain('<g class="land">')
-  expect(source).toContain('.land{transform:translateY(-270px)}')
+  // The sand and the caravan hang a fixed number of pixels above the foot.
+  expect(source).toContain('<svg class="land" y="100%" overflow="visible">')
+  expect(source).toContain(`translate(0 -${CARAVAN_BOTTOM_PX})`)
   await ui.unmount()
 })
