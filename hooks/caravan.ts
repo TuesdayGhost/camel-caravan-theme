@@ -306,6 +306,15 @@ const SVG_CAMELS = 6
 const SVG_FROM = -60
 const SVG_TO = 1660
 const SVG_STARS = 70
+// How far the sand, the oasis and the caravan are raised from the foot of the
+// scene, so they walk above the message box and not behind it. The scene
+// cannot read where that box is, so the lift goes by the scene's own size: in
+// the scene's units, which a wide window draws larger (less lift needed) and a
+// small one smaller (more).
+const LAND_LIFT = 270
+const LAND_LIFT_WIDE = 200
+const LAND_LIFT_WIDEST = 150
+const LAND_LIFT_SMALL = 350
 
 const CARGO_SVG: Readonly<Record<Cargo, string>> = {
   none: '',
@@ -393,6 +402,10 @@ export const backdropSvg = (caravan: Caravan, now: number): string => {
 @keyframes walk{from{transform:translateX(${SVG_FROM}px)}to{transform:translateX(${SVG_TO}px)}}
 @keyframes drop{to{opacity:0;transform:translateY(8px)}}
 @keyframes twinkle{50%{opacity:.2}}
+.land{transform:translateY(-${LAND_LIFT}px)}
+@media (min-width:1700px){.land{transform:translateY(-${LAND_LIFT_WIDE}px)}}
+@media (min-width:2300px){.land{transform:translateY(-${LAND_LIFT_WIDEST}px)}}
+@media (max-width:1100px) and (max-height:700px){.land{transform:translateY(-${LAND_LIFT_SMALL}px)}}
 @media (prefers-reduced-motion: reduce){.camel,.drop,.star{animation:none!important}.drop{display:none}}`
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" height="100%" preserveAspectRatio="xMidYMax slice" font-family="monospace" color="#888"><style>${style}</style><defs>
@@ -400,9 +413,12 @@ export const backdropSvg = (caravan: Caravan, now: number): string => {
 <rect width="1600" height="1000" fill="url(#night)"/>
 ${starsSvg()}
 <g opacity=".85"><circle cx="1330" cy="150" r="44" fill="#f5e9a0"/><circle cx="1350" cy="138" r="40" fill="#0c1026"/></g>
-<path d="M0 940Q200 900 400 935T800 930T1200 940T1600 925V1000H0z" fill="#262036"/>
-<path d="M0 972Q300 952 600 970T1200 968T1600 972V1000H0z" fill="#1b1728"/>
+<g class="land">
+<path d="M0 940Q200 900 400 935T800 930T1200 940T1600 925V1600H0z" fill="#262036"/>
+<path d="M0 972Q300 952 600 970T1200 968T1600 972V1600H0z" fill="#1b1728"/>
+<path d="M0 1075Q400 1040 800 1070T1600 1062V1600H0z" fill="#171322"/>
 <g transform="translate(${oasisX.toFixed(0)} 970)" opacity=".8"><ellipse cx="34" cy="2" rx="40" ry="5" fill="#2c5f7a"/><path d="M0 0q-6 -30 4 -58" fill="none" stroke="#5c4a34" stroke-width="5" stroke-linecap="round"/><path d="M4 -58q-22 -14 -36 2M4 -58q-10 -24 -30 -22M4 -58q8 -24 30 -20M4 -58q24 -12 36 6M4 -58q16 2 22 20" fill="none" stroke="#2f6b4a" stroke-width="4" stroke-linecap="round"/></g>
 <g transform="translate(0 968)" fill="#c9a66b" opacity=".6">${camels}</g>
+</g>
 </svg>`
 }

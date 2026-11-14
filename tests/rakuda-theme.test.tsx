@@ -210,5 +210,8 @@ test('the desktop backdrop is one night scene that honours reduced motion', asyn
   expect(source.match(/class="camel"/g)?.length).toBe(6)
   expect(source.match(/class="cargo"/g)?.length).toBe(6)
   expect(source.match(/class="star"/g)?.length).toBe(70)
+  // The sand and the caravan are raised clear of the message box.
+  expect(source).toContain('<g class="land">')
+  expect(source).toContain('.land{transform:translateY(-270px)}')
   await ui.unmount()
 })
