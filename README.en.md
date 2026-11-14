@@ -4,6 +4,8 @@
 
 ![Terminal: a camel caravan walking above the prompt](docs/screenshot-terminal.png)
 
+![Terminal (animation): the loads change with the tools, and turn to a red "!" when one fails](docs/terminal.gif)
+
 ![Desktop app: a moonlit desert behind the chat](docs/screenshot-desktop.png)
 
 ![Desktop app (animation): the loads change with the tools, and turn to a red "!" when one fails](docs/desktop.gif)

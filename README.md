@@ -4,6 +4,8 @@
 
 ![ターミナル: プロンプトの上を歩くラクダのキャラバン](docs/screenshot-terminal.png)
 
+![ターミナル（動画）: ツールに合わせて荷物が変わり、失敗すると赤い「!」になる](docs/terminal.gif)
+
 ![デスクトップアプリ: チャットの背景の月夜の沙漠](docs/screenshot-desktop.png)
 
 ![デスクトップアプリ（動画）: ツールに合わせて荷物が変わり、失敗すると赤い「!」になる](docs/desktop.gif)
